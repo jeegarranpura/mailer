@@ -4,16 +4,10 @@ const path = require("path");
 const fs = require("fs");
 
 // email
+const dns = require("dns");
 const nodemailer = require("nodemailer");
-// const transporter = nodemailer.createTransport({
-//   host: "smtp.gmail.com",
-//   port: 587,
-//   secure: false, // STARTTLS
-//   auth: {
-//     user: "jeegarnodejs.aegis@gmail.com",
-//     pass: "ndfyrmobbidvdfjy", // your generated app password
-//   },
-// });
+
+dns.setDefaultResultOrder("ipv4first");
 
 const transporter = nodemailer.createTransport({
   // host: "smtp.gmail.com",
@@ -21,8 +15,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // REQUIRED for 587
   auth: {
-    user: "jeegarnodejs.aegis@gmail.com",
-    pass: "ndfyrmobbidvdfjy", // your generated app password
+    user: process.env.USER,
+    pass: process.env.PASS, // your generated app password
   }
 });
 
