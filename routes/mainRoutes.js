@@ -117,6 +117,7 @@ const thankYouMailTemplate = (email) => {
 async function sendMails(req, res, next) {
   try {
     const { name, email, message, subject } = req.body;
+    console.log(req.body)
 
     const mailOptions = {
       from: "jeegarnodejs.aegis@gmail.com",
@@ -141,7 +142,7 @@ async function sendMails(req, res, next) {
     // const info2 = await transporter.sendMail(mailOptionThanks);
     return res.status(200).json(info);
   } catch (error) {
-    console.error("MAIL ERROR:", error);
+    console.log("MAIL ERROR:", error);
 
     return res.status(500).json({
       status: "error",
