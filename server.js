@@ -14,7 +14,7 @@ app.use(
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: "*",
+    origin: ['https://jeegar-soni.vercel.app/', 'http://localhost:3000/'],
   }),
 );
 app.use("/api/v1/", require("./routes/mainRoutes"));
