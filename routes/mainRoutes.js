@@ -16,16 +16,14 @@ const nodemailer = require("nodemailer");
 // });
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  // host: "smtp.gmail.com",
+  service: 'gmail',
   port: 587,
   secure: false, // REQUIRED for 587
   auth: {
     user: "jeegarnodejs.aegis@gmail.com",
     pass: "ndfyrmobbidvdfjy", // your generated app password
-  },
-  tls: {
-    servername: "smtp.gmail.com",
-  },
+  }
 });
 
 router.get("/home", getHome);
