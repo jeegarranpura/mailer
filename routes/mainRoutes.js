@@ -9,16 +9,21 @@ const nodemailer = require("nodemailer");
 
 dns.setDefaultResultOrder("ipv4first");
 
-const transporter = nodemailer.createTransport({
-  // host: "smtp.gmail.com",
-  service: 'gmail',
-  port: 587,
-  secure: false, // REQUIRED for 587
-  auth: {
-    user: process.env.USER,
-    pass: process.env.PASS, // your generated app password
-  }
-});
+// const transporter = nodemailer.createTransport({
+//   // host: "smtp.gmail.com",
+//   service: "gmail",
+//   port: 587,
+//   secure: false, // REQUIRED for 587
+//   auth: {
+//     user: process.env.USER,
+//     pass: process.env.PASS, // your generated app password
+//   },
+// });
+
+const SibApiV3Sdk = require("sib-api-v3-sdk");
+
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
 router.get("/home", getHome);
 router.post("/sendMails", sendMails);
@@ -31,12 +36,7 @@ async function getHome(req, res, next) {
   }
 }
 
-const contactPageTemplate = (
-  name,
-  email,
-  message,
-  subject,
-) => {
+const contactPageTemplate = (name, email, message, subject) => {
   return `<!doctype html>
 <html>
   <head>
@@ -117,20 +117,22 @@ const thankYouMailTemplate = (email) => {
 async function sendMails(req, res, next) {
   try {
     const { name, email, message, subject } = req.body;
-    console.log(req.body)
-
-    const mailOptions = {
-      from: "jeegarnodejs.aegis@gmail.com",
-      to: "jigar.ranpura99@gmail.com",
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    const sendSmtpEmail = {
+      sender: { email: "jeegarnodejs.aegis@gmail.com" },
+      to: [{ email: "jigar.ranpura99@gmail.com" }],
       subject: "Contact inquiry",
-    //   attachments: attachments,
-      html: contactPageTemplate(
-        name,
-        email,
-        message,
-        subject,
-      ),
+      htmlContent: contactPageTemplate(name, email, message, subject),
     };
+    console.log(req.body);
+
+    // const mailOptions = {
+    //   from: "jeegarnodejs.aegis@gmail.com",
+    //   to: "jigar.ranpura99@gmail.com",
+    //   subject: "Contact inquiry",
+    //   //   attachments: attachments,
+    //   html: contactPageTemplate(name, email, message, subject),
+    // };
     // const mailOptionThanks = {
     //   from: "jeegarnodejs.aegis@gmail.com",
     //   to: email,
@@ -138,7 +140,8 @@ async function sendMails(req, res, next) {
     //   html: thankYouMailTemplate(name),
     // };
 
-    const info = await transporter.sendMail(mailOptions);
+    // const info = await transporter.sendMail(mailOptions);
+    const info = await apiInstance.sendTransacEmail(sendSmtpEmail);
     // const info2 = await transporter.sendMail(mailOptionThanks);
     return res.status(200).json(info);
   } catch (error) {
@@ -150,6 +153,5 @@ async function sendMails(req, res, next) {
     });
   }
 }
-
 
 module.exports = router;
